@@ -12,13 +12,15 @@ class Representant:
     def update_fitness(self) -> None:
         
         fitness = 0
+        
+        current_time = self.genes[0].start_time
+        for current_point, next_point in zip(self.genes[::1], self.genes[1::1]):
 
-        for i in range(len(self.genes)):
-            current_point = self.genes[i]
-            next_point = self.genes[i+1] % len(self.genes) #avoid reaching not existing point
+            # current_point = self.genes[i]
+            # next_point = self.genes[i+1] % len(self.genes) #avoid reaching not existing point
 
-            if i == 0:
-                current_time = current_point.start_time
+            # if i == 0:
+            #     current_time = current_point.start_time
 
             #How long do we have to wait?
             wait_time = _time_till_open(current_time, current_point.start_time, current_point.end_time)
@@ -35,7 +37,42 @@ class Representant:
         self.fitness = fitness
     
     def crossover(self, other : Representant) -> tuple[Representant, Representant]:
-        pass
+
+        size = len(self.genes)
+        
+        #random points to cross
+        crossover_1 = random.randint(0, size-1)
+        crossover_2 = random.randint(0, size-1)
+
+        #choose smaller/bigger index
+        start_index = min(crossover_1, crossover_2)
+        end_index = max(crossover_1, crossover_2)
+
+        #init children's genes
+        child1_genes = self.genes[:]
+        child2_genes = other.genes[:]
+
+        #switch genes
+        child1_genes[start_index:end_index] = other.genes[start_index:end_index]
+        child2_genes[start_index:end_index] = self.genes[start_index:end_index]
+
+        #genes should be unique
+        child1_genes = list(set(child1_genes))
+        child2_genes = list(set(child2_genes))
+
+        #fix child1
+        while len(child1_genes) < size:
+            missing_genes = list(set(self.genes) - set(child1_genes))
+            random_gene = random.choice(missing_genes)
+            child1_genes.append(random_gene) #add random mssing gene
+        
+        #fix child2
+        while len(child2_genes) < size:
+            missing_genes = list(set(self.genes) - set(child2_genes))
+            random_gene = random.choice(missing_genes)
+            child2_genes.append(random_gene) #add random mssing gene
+        
+        return Representant(child1_genes), Representant(child2_genes)
 
     def mutate(self) -> Representant:
         index1 = random.randint(0, len(self.genes) - 1)
