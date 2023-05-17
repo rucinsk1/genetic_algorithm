@@ -9,6 +9,7 @@ class GeneticAlgorithm:
 
     def __init__(self, population_size : int, iterations : int, min_value : Optional[float], n_points : int = 6, area_size : int = 20, mutation_probability : float = 0.02):
         
+        self._check_args(population_size, iterations, n_points, area_size, mutation_probability)
         self.n_points = n_points
         #self.population_size = population_size
         #self.area_size = area_size
@@ -70,6 +71,17 @@ class GeneticAlgorithm:
         self.population = new_population
         #print("BEST at end:", self.best.fitness)
 
+    def _check_args(self, population_size : int, iterations : int, n_points, area_size : int, mutation_probability : float) -> None:
+        if type(population_size) != int or population_size <= 0:
+            raise ValueError("Invalid population_size, it should be positive integer")
+        elif type(iterations) != int or iterations <= 0:
+            raise ValueError("Invalid iterations, it should be positive integer")
+        elif type(n_points) != int or n_points <= 0:
+            raise ValueError("Invalid n_points, it should be positive integer")
+        elif type(area_size) != int or area_size <= 0:
+            raise ValueError("Invalid area_size, it should be positive integer")
+        elif type(mutation_probability) != float or mutation_probability <= 0 or mutation_probability > 1:
+            raise ValueError("Invalid mutation_probability, it should be float between 0 and 1")
 
 def _generate_population(population_size : int, area_size : int, n_points : int) -> list[Representant]:
     
@@ -86,3 +98,4 @@ def _generate_population(population_size : int, area_size : int, n_points : int)
         population.append(Representant(genes))
     
     return population
+
