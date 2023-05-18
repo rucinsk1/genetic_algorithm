@@ -26,7 +26,7 @@ def generate_points(n_points : int, area_size : int = 20) -> list[Point]:
         x = random.randint(0, area_size)
         y = random.randint(0, area_size)
         start_time = random.randint(0, 23)
-        end_time = random.randint(start_time, 24)
+        end_time = random.randint(start_time+1, 24)
         points.append(Point(i, x, y, start_time, end_time))
     
     return points
